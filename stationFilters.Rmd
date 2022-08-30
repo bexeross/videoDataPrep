@@ -26,4 +26,22 @@ Outputs: sppdens_qc
 library(tidyverse)
 ```
 
-# 
+# Station-level quality assessment
+
+## Assess data completeness
+We should use only video lines where data is complete. We determine that by looking at the total number of biological annotations relative to the towed distance. Note that total number of biological annotations depends on species richness, so expect large variation 
+```{r}
+hist(refer$total_bio/refer$towed_distance, main = "Distribution of records:distance ratio",
+     xlab = "total records : towed distance")
+```
+
+## Make a list of "good" stations
+Check how much data we would be using/discarding for each threshold
+```{r}
+thres <- 5
+good <- refer$nSampleNumber[which(refer$total_bio/refer$towed_distance<thres)]
+refer %>% filter(nSampleNumber%in%unique(sample_info$VL)) %>%
+  filter(!(nSampleNumber%in%good)) #%>%
+  print(n=1000)
+  View
+```
