@@ -12,3 +12,18 @@ output:
 always_allow_html: true 
 ---
 
+# Introduction
+
+In this notebook we filter out stations and/or samples that fail various data quality filters. We also subset the data to make it more or less one third of the total.
+
+Requirements: sppdens, sample_info, refer
+
+Outputs: sppdens_qc
+
+# Libraries
+
+```{r}
+library(tidyverse)
+```
+
+# 
