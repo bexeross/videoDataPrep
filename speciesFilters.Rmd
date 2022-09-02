@@ -6,6 +6,12 @@ authors: Rebecca Ross and Genoveva Gonzales-Mirelis
 
 This script assumes that MarVid data has passed through the rStation and sample filters already, and will now undergo species filters that are common between NiN/biotope analyses. Some additional filters may only be applied on an analysis-specific basis - these are found within the analyses projects themselves (e.g. deepseaNiN or twinspanBiotopes).
 
+#libraries
+```{r}
+library(tidyr)
+library(dplyr)
+```
+
 
 # Inputs
 - Assumes have run config and stationFilters scripts already.
