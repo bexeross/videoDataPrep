@@ -17,8 +17,13 @@ Currently using a temporary wide species_densities based object as input, when r
 ```{r}
 #temporary code to make working object
 
+wideData <- sppdens %>% select(-c(TotAbu_pseudocount)) %>%
+  mutate(clean_taxonomy = gsub(" ","_",clean_taxonomy)) %>%
+  mutate(clean_taxonomy = gsub("\\..*","",clean_taxonomy, fixed=FALSE)) %>%#removes whats after the ;
+  mutate(clean_taxonomy = tolower(clean_taxonomy)) %>%
+  pivot_wider(names_from = clean_taxonomy, values_from = density_n100m2, values_fill = 0, values_fn = sum)
 
-
+head(wideData)
 
 ```
 
