@@ -8,8 +8,8 @@ This script assumes that MarVid data has passed through the rStation and sample 
 
 
 # Inputs
-Assumes have run config and stationFilters scripts already.
-Needs Taxonary
+- Assumes have run config and stationFilters scripts already.
+- Needs Taxonary
 
 Currently using a temporary wide species_densities based object as input, when ready will replace with object generated in previous step (stationFilters)
 
