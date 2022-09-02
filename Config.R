@@ -6,9 +6,9 @@ library(readxl)
 
 # C:\Users\genoveva\ownCloud\NiN_Mareano\inputs
 
-#userName = "C:/Users/genoveva/" # replace with your own name here
-userName = "C:/Users/a21448/" # bex's path
-#userName = "C:/Users/genoveva/"
+#userName <- "C:/Users/genoveva/" # replace with your own name here
+userName <- "C:/Users/a21448/" # bex's path
+#userName <- "C:/Users/genoveva/"
   
   
 dataPath1 <- "ownCloud/NiN_Mareano/inputs"
