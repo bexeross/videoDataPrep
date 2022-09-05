@@ -17,6 +17,43 @@ library(dplyr)
 - Assumes have run config and stationFilters scripts already.
 - Needs Taxonary
 
+#Filter taxonary
+
+RULES
+
+- Remove object_type !=Organism
+```{r}
+t.org <-subset(taxonary, Object_type=="Organism" )
+```
+
+
+- Remove specificity =4
+```{r}
+t.orgSpec<-subset(t.org, Specificity<4)
+```
+
+- Remove Size_class = Macro
+```{r}
+t.orgSpecMega<-subset(t.orgSpec, Size_class=="Mega")
+```
+
+
+- Remove ecosystem_section = Demersal/Hyperbenthic
+```{r}
+t.orgSpecMegaBenthic<-subset(t.orgSpecMega, Ecosystem_section=="Benthic" )
+```
+
+
+# Select from sppdens (stationFiltered) object
+
+```{r}
+
+```
+
+
+
+
+
 
 #Output
 Will be wide format of filtered speices list applied to the species_densities object that has been filtered for stations..
