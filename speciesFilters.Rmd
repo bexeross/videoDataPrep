@@ -17,8 +17,9 @@ library(dplyr)
 - Assumes have run config and stationFilters scripts already.
 - Needs Taxonary
 
-Currently using a temporary wide species_densities based object as input, when ready will replace with object generated in previous step (stationFilters)
 
+#Output
+Will be wide format of filtered speices list applied to the species_densities object that has been filtered for stations..
 
 ```{r}
 #temporary code to make working object
