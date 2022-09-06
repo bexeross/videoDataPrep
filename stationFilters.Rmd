@@ -44,14 +44,33 @@ hist(refer$total_bio/refer$towed_distance, main = "Distribution of records:dista
      xlab = "total records : towed distance")
 ```
 
-## Make a list of "good" stations
+# Stations with an unexpected number of annotations in relation to length
 Check how much data we would be using/discarding for each threshold
 ```{r}
 thres <- 5
 good <- refer$nSampleNumber[which(refer$total_bio/refer$towed_distance<thres)]
-not_good <- refer %>% filter(nSampleNumber%in%unique(sample_info$VL)) %>%
-  filter(!(nSampleNumber%in%good)) %>%
-  filter(!nSampleNumber%in%x$nSampleNumber) %>%
-  print(n=1000)
-  #View
+not_good <- refer %>% 
+  filter(!(nSampleNumber%in%x$nSampleNumber)) %>%
+  filter(!(nSampleNumber%in%good))
+not_good %>%
+  select(nRefStation,nSampleNumber,towed_distance,total_records)
+```
+
+## Filter stations for other reasons
+```{r}
+refer %>%
+  filter(!is.na(reason_excluded)) %>%
+  select(nRefStation,nSampleNumber,reason_excluded)
+  
+```
+
+## Final set of Ref Stations
+```{r}
+stationFilter <- refer %>%
+  filter(!(nSampleNumber%in%x$nSampleNumber)) %>%
+  filter(nSampleNumber%in%good) %>%
+  filter(is.na(reason_excluded)) %>%
+  select(nRefStation) %>%
+  pull()
+length(stationFilter)
 ```
