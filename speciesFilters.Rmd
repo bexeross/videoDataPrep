@@ -81,7 +81,7 @@ lkup.specLT1<-t.sel.specLT1%>%
 #Check if those feature in sppdens dataset (none in sppDens right now, so check code with future dataset)
 
 check.specLT1.sppDens<-sppdens%>% filter(clean_taxonomy%in%lkup.specLT1$`Reference List`) #none in spdens, so no issue right now
-
+check.specLT1.sppDens
 #find and replace using the lookup table (not checked if working, and still incomplete, check with future data if there are <1 specificity taxa recorded in the sppdens dataset)
 
 # sel.sppDens$clean_taxonomy2<-with (sel.sppDens, replace(clean_taxonomy, which(clean_taxonomy==lkup.specLT1$`Reference List`), lkup.specLT1$clean_taxonomy))
@@ -91,19 +91,18 @@ check.specLT1.sppDens<-sppdens%>% filter(clean_taxonomy%in%lkup.specLT1$`Referen
 
 
 
-
-
-
 #Output
 Will be wide format of filtered species list applied to the species_densities object that has been filtered for stations..
 
-```{r}
-#temporary code to make working object
 
+```{r}
+
+#temporary code to make working object - ensure use specLT1 object later
 wideData <- sel.sppDens %>% select(-c(TotAbu_pseudocount)) %>%
   mutate(clean_taxonomy = gsub(" ","_",clean_taxonomy)) %>%
  # mutate(clean_taxonomy = gsub("\\..*","",clean_taxonomy, fixed=FALSE)) %>%#removes whats after the ;
-  pivot_wider(names_from = clean_taxonomy, values_from = density_n100m2, values_fill = 0, values_fn = sum)
+  pivot_wider(names_from = clean_taxonomy, values_from = density_n100m2, values_fill = 0, values_fn = sum)%>%
+  select("SampID",sort(colnames(.))) #nice to have the cols alphabetical
 
 head(wideData)
 
