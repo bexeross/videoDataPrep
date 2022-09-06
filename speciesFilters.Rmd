@@ -16,6 +16,9 @@ library(dplyr)
 # Inputs
 - Assumes have run config and stationFilters scripts already.
 - Needs Taxonary
+(loaded into environment when you have run the config.R script in this repo)
+
+
 
 #Filter taxonary
 
@@ -41,31 +44,65 @@ t.orgSpecMega<-subset(t.orgSpec, Size_class=="Mega")
 - Remove ecosystem_section = Demersal/Hyperbenthic
 ```{r}
 t.orgSpecMegaBenthic<-subset(t.orgSpecMega, Ecosystem_section=="Benthic" )
+unique(t.orgSpecMegaBenthic$`Reference List`)
 ```
+
+
+
+
+
 
 
 # Select from sppdens (stationFiltered) object
 
 ```{r}
+sel.sppDens<-sppdens%>% filter(clean_taxonomy%in%t.orgSpecMegaBenthic$`Reference List`)
 
+unique(sel.sppDens$clean_taxonomy) #391 taxa after selection with the 529 selected taxonary taxa - why?
+
+#unique(sppdens$clean_taxonomy) #637 taxa in spp dens
+
+# check.sppDens<-sppdens%>% filter(clean_taxonomy%in%taxonary$`Reference List`)
+# unique(check.sppDens$clean_taxonomy) #637 of spp dens found in taxonary.
+
+# this is hopefully correct - the 391 compared to the 529 approved taxa may be due to the removal of coastal stations and still portions of transects
+```
+# Deal with specificity <1
+
+```{r}
+#list taxa with specificity <1 (sub species level)
+t.sel.specLT1<-subset(t.orgSpecMegaBenthic, Specificity<1)
+
+#create look up table converting these to species level (remove what is after the ';')
+lkup.specLT1<-t.sel.specLT1%>%
+  select(`Reference List`) %>%
+  mutate(clean_taxonomy = gsub(";.*","",`Reference List`))
+
+#Check if those feature in sppdens dataset (none in sppDens right now, so check code with future dataset)
+
+check.specLT1.sppDens<-sppdens%>% filter(clean_taxonomy%in%lkup.specLT1$`Reference List`) #none in spdens, so no issue right now
+check.specLT1.sppDens
+#find and replace using the lookup table (not checked if working, and still incomplete, check with future data if there are <1 specificity taxa recorded in the sppdens dataset)
+
+# sel.sppDens$clean_taxonomy2<-with (sel.sppDens, replace(clean_taxonomy, which(clean_taxonomy==lkup.specLT1$`Reference List`), lkup.specLT1$clean_taxonomy))
+#unique(sel.sppDens.cln$clean_taxonomy2)
+  
 ```
 
 
 
-
-
-
 #Output
-Will be wide format of filtered speices list applied to the species_densities object that has been filtered for stations..
+Will be wide format of filtered species list applied to the species_densities object that has been filtered for stations..
+
 
 ```{r}
-#temporary code to make working object
 
-wideData <- sppdens %>% select(-c(TotAbu_pseudocount)) %>%
+#temporary code to make working object - ensure use specLT1 object later
+wideData <- sel.sppDens %>% select(-c(TotAbu_pseudocount)) %>%
   mutate(clean_taxonomy = gsub(" ","_",clean_taxonomy)) %>%
-  mutate(clean_taxonomy = gsub("\\..*","",clean_taxonomy, fixed=FALSE)) %>%#removes whats after the ;
-  mutate(clean_taxonomy = tolower(clean_taxonomy)) %>%
-  pivot_wider(names_from = clean_taxonomy, values_from = density_n100m2, values_fill = 0, values_fn = sum)
+ # mutate(clean_taxonomy = gsub("\\..*","",clean_taxonomy, fixed=FALSE)) %>%#removes whats after the ;
+  pivot_wider(names_from = clean_taxonomy, values_from = density_n100m2, values_fill = 0, values_fn = sum)%>%
+  select("SampID",sort(colnames(.))) #nice to have the cols alphabetical
 
 head(wideData)
 
