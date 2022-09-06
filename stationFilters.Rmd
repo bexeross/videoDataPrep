@@ -44,7 +44,7 @@ hist(refer$total_bio/refer$towed_distance, main = "Distribution of records:dista
      xlab = "total records : towed distance")
 ```
 
-# Stations with an unexpected number of annotations in relation to length
+### Stations with an unexpected number of annotations in relation to length
 Check how much data we would be using/discarding for each threshold
 ```{r}
 thres <- 5
@@ -73,4 +73,57 @@ stationFilter <- refer %>%
   select(nRefStation) %>%
   pull()
 length(stationFilter)
+```
+
+# Sample-level quality assessment
+
+## Examine distribution of surveyed distance and area
+Examine the distribution of total area and length of samples
+```{r}
+sample_info <- sample_info %>%
+  mutate(area_m2 = SegLengthM * meanFoV_m)
+par(mfrow=c(1,2))
+hist(sample_info$area_m2, main ="Surveyed area", xlab = "Area (m2)")
+hist(sample_info$SegLengthM, main ="Surveyed distance", xlab = "Length (m)")
+```
+
+## Set thresholds for data quality
+Decide what is acceptable in terms of length of sample and picture quality. The percentages shown below are relative to the whole set of MAREANO stations (and not the "good" stations!)
+```{r, warning=FALSE}
+# thresholds for total surveyed area
+#survarea_upper <- 1200
+#survarea_lower <- 250
+
+# alternative, set thresholds for survey length (maybe better)
+length_lower <- 150
+length_upper <- 400 # is this too much?
+
+# threshold for picture quality
+# in English, Doc: "either unknown, or not more than half with no vision, or not more than one quarter with poor vision"
+poorvis_thres <- 0.75
+novis_thres <- 0.5
+
+#table(ifelse(is.na(sample_info$ok_vision),1,
+#                       ifelse(sample_info$poor_vision<poorvis_thres&sample_info$no_vision<novis_thres,1,0)))
+
+filter1 <- sum(with(sample_info, SegLengthM>length_lower&SegLengthM<length_upper))
+filter2 <- length(which(with(sample_info, ifelse(is.na(ok_vision),1,
+                    ifelse(poor_vision<poorvis_thres&no_vision<novis_thres,1,0)))==1))
+filter <- #sum(
+    rowSums(
+  cbind((with(sample_info, SegLengthM>length_lower&SegLengthM<length_upper)),ifelse(is.na(sample_info$ok_vision),1,
+       with(sample_info, ifelse(poor_vision<poorvis_thres & no_vision<novis_thres,1,0)))))==2
+#)
+
+# make filter for later use
+new_filter <- data.frame(SampID = sample_info$SampID,Filter = filter) %>%
+  left_join(data.frame(SampID=trimmedwide$SampID),., by = "SampID")%>%
+  select(Filter) %>%
+  pull(Filter)
+
+summary<-data.frame("length_filter_pass"=filter1/dim(sample_info)[1],
+                    "picqual_filter_pass" =filter2/dim(sample_info)[1],
+                    "both" = sum(filter)/dim(sample_info)[1])
+
+summary
 ```
