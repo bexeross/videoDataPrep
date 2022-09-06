@@ -28,7 +28,8 @@ library(tidyverse)
 
 # Station-level quality assessment
 
-## Check for reasons why data not in Marvid
+## List stations whose data is not in MarVid
+Check for reasons why, including the possibility of it not having been analyzed yet
 ```{r}
 x<-refer %>% filter(is.na(total_records))%>%
   select(nRefStation,nSampleNumber,Comments,Other.comments,Notes,Notes.II)
@@ -48,7 +49,7 @@ Check how much data we would be using/discarding for each threshold
 ```{r}
 thres <- 5
 good <- refer$nSampleNumber[which(refer$total_bio/refer$towed_distance<thres)]
-refer %>% filter(nSampleNumber%in%unique(sample_info$VL)) %>%
+not_good <- refer %>% filter(nSampleNumber%in%unique(sample_info$VL)) %>%
   filter(!(nSampleNumber%in%good)) %>%
   filter(!nSampleNumber%in%x$nSampleNumber) %>%
   print(n=1000)
