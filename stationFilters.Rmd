@@ -174,7 +174,9 @@ sample_info_f <-
   length
 ```
 
-# Subset samples randomly within station
+# Subset samples for maneagbility
+## Take a random (sub)sample from each Ref station
 ```{r}
 sample_info_f_ss <- sample_info_f %>% group_by(VL) %>% slice_sample(n=1)
+length(unique(sample_info_f_ss$VL))
 ```
