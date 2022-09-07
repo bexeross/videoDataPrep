@@ -28,8 +28,18 @@ library(tidyverse)
 
 # Station-level quality assessment
 
+## Total number of Ref stations
+This includes all stations completed in the field up to cruise number below
+```{r}
+dim(refer)[1]
+```
+### Last cruise included in this lot
+```{r}
+max(refer$cruise_no)
+```
+
 ## List stations whose data is not in MarVid
-Check for reasons why, including the possibility of it not having been analyzed yet
+Check for reasons why. Keep in mind that it's possible the station has not yet been analyzed.
 ```{r}
 x<-refer %>% filter(is.na(total_records))%>%
   select(nRefStation,nSampleNumber,Comments,Other.comments,Notes,Notes.II)
@@ -38,7 +48,7 @@ x
 
 
 ## Assess data completeness
-We should use only video lines where data is complete. We determine that by looking at the total number of biological annotations relative to the towed distance. Note that total number of biological annotations depends on species richness, so expect large variation 
+We should use only video lines where data is complete. One way to determine that is by looking at the total number of biological annotations relative to the towed distance. Note that total number of biological annotations depends on species richness, so expect large variation!
 ```{r}
 hist(refer$total_bio/refer$towed_distance, main = "Distribution of records:distance ratio",
      xlab = "total records : towed distance")
@@ -55,6 +65,7 @@ not_good <- refer %>%
 not_good %>%
   select(nRefStation,nSampleNumber,towed_distance,total_records)
 ```
+##### I have checked these and they are either fine, or will fall out later on. Turn this one off
 
 ## Filter stations for other reasons
 ```{r}
@@ -65,22 +76,39 @@ refer %>%
 ```
 
 ## Final set of Ref Stations
+Count
 ```{r}
 stationFilter <- refer %>%
-  filter(!(nSampleNumber%in%x$nSampleNumber)) %>%
-  filter(nSampleNumber%in%good) %>%
-  filter(is.na(reason_excluded)) %>%
-  select(nRefStation) %>%
+  filter(!(nSampleNumber%in%x$nSampleNumber)) %>% # eliminate those whose data is not in MarVid
+  filter(nSampleNumber%in%good) %>%               # eliminate those with weird no. of bio annotations
+  filter(is.na(reason_excluded)) %>%              # mixed reasons to be excluded (short lines, wiggly lines, etc.)
+  select(nSampleNumber) %>%
   pull()
 length(stationFilter)
 ```
 
 # Sample-level quality assessment
 
+## Count of Video Lines that have been split into Samples
+Only navigation data is required for this
+```{r}
+length(unique(sample_info$VL))
+```
+### Video Lines left after applying stationFilter
+```{r}
+sample_info %>%
+  select(VL) %>%
+  unique() %>%
+  filter(VL%in%stationFilter) %>%
+  pull %>%
+  length
+```
+
 ## Examine distribution of surveyed distance and area
 Examine the distribution of total area and length of samples
 ```{r}
-sample_info <- sample_info %>%
+sample_info_f <- sample_info %>% 
+  filter(VL%in%stationFilter) %>%
   mutate(area_m2 = SegLengthM * meanFoV_m)
 par(mfrow=c(1,2))
 hist(sample_info$area_m2, main ="Surveyed area", xlab = "Area (m2)")
@@ -103,27 +131,27 @@ length_upper <- 400 # is this too much?
 poorvis_thres <- 0.75
 novis_thres <- 0.5
 
-#table(ifelse(is.na(sample_info$ok_vision),1,
-#                       ifelse(sample_info$poor_vision<poorvis_thres&sample_info$no_vision<novis_thres,1,0)))
+#table(ifelse(is.na(sample_info_f$ok_vision),1,
+#                       ifelse(sample_info_f$poor_vision<poorvis_thres&sample_info_f$no_vision<novis_thres,1,0)))
 
-filter1 <- sum(with(sample_info, SegLengthM>length_lower&SegLengthM<length_upper))
-filter2 <- length(which(with(sample_info, ifelse(is.na(ok_vision),1,
+filter1 <- sum(with(sample_info_f, SegLengthM>length_lower&SegLengthM<length_upper))
+filter2 <- length(which(with(sample_info_f, ifelse(is.na(ok_vision),1,
                     ifelse(poor_vision<poorvis_thres&no_vision<novis_thres,1,0)))==1))
 filter <- #sum(
     rowSums(
-  cbind((with(sample_info, SegLengthM>length_lower&SegLengthM<length_upper)),ifelse(is.na(sample_info$ok_vision),1,
-       with(sample_info, ifelse(poor_vision<poorvis_thres & no_vision<novis_thres,1,0)))))==2
+  cbind((with(sample_info_f, SegLengthM>length_lower&SegLengthM<length_upper)),ifelse(is.na(sample_info_f$ok_vision),1,
+       with(sample_info_f, ifelse(poor_vision<poorvis_thres & no_vision<novis_thres,1,0)))))==2
 #)
 
-# make filter for later use
-new_filter <- data.frame(SampID = sample_info$SampID,Filter = filter) %>%
-  left_join(data.frame(SampID=trimmedwide$SampID),., by = "SampID")%>%
-  select(Filter) %>%
-  pull(Filter)
-
-summary<-data.frame("length_filter_pass"=filter1/dim(sample_info)[1],
-                    "picqual_filter_pass" =filter2/dim(sample_info)[1],
-                    "both" = sum(filter)/dim(sample_info)[1])
+summary<-data.frame("length_filter_pass"=filter1/dim(sample_info_f)[1],
+                    "picqual_filter_pass" =filter2/dim(sample_info_f)[1],
+                    "both" = sum(filter)/dim(sample_info_f)[1])
 
 summary
+```
+
+### Check out those that get filtered out
+#### Length filter fail
+```{r}
+sample_info_f %>% filter(SegLengthM<length_lower|SegLengthM>length_upper)
 ```
