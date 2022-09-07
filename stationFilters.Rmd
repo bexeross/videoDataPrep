@@ -33,7 +33,7 @@ This includes all stations completed in the field up to cruise number below
 ```{r}
 dim(refer)[1]
 ```
-### Last cruise included in this lot
+#### Last cruise included in this lot is...
 ```{r}
 max(refer$cruise_no)
 ```
@@ -72,7 +72,6 @@ not_good %>%
 refer %>%
   filter(!is.na(reason_excluded)) %>%
   select(nRefStation,nSampleNumber,reason_excluded)
-  
 ```
 
 ## Final set of Ref Stations
@@ -80,7 +79,7 @@ Count
 ```{r}
 stationFilter <- refer %>%
   filter(!(nSampleNumber%in%x$nSampleNumber)) %>% # eliminate those whose data is not in MarVid
-  filter(nSampleNumber%in%good) %>%               # eliminate those with weird no. of bio annotations
+  #filter(nSampleNumber%in%good) %>%               # eliminate those with weird no. of bio annotations
   filter(is.na(reason_excluded)) %>%              # mixed reasons to be excluded (short lines, wiggly lines, etc.)
   select(nSampleNumber) %>%
   pull()
@@ -153,5 +152,29 @@ summary
 ### Check out those that get filtered out
 #### Length filter fail
 ```{r}
-sample_info_f %>% filter(SegLengthM<length_lower|SegLengthM>length_upper)
+lengFilter <- with(sample_info_f,SegLengthM>length_lower&SegLengthM<length_upper)
+sample_info_f %>% filter(!lengFilter)
+```
+
+#### Picture quality filter fail
+```{r}
+picqFilter <-with(sample_info_f, ifelse(is.na(ok_vision),1,
+                    ifelse(poor_vision<poorvis_thres&no_vision<novis_thres,1,0)))==1
+sample_info_f %>% filter(!picqFilter)
+```
+
+## Final set of samples
+This bit is still not working!
+```{r}
+combinedFilter <- filter
+sample_info_f <- 
+  dplyr::filter(combinedFilter) %>%
+  select(SampID) %>%
+  pull %>%
+  length
+```
+
+# Subset samples randomly within station
+```{r}
+sample_info_f_ss <- sample_info_f %>% group_by(VL) %>% slice_sample(n=1)
 ```
