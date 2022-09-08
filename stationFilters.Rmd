@@ -14,16 +14,24 @@ always_allow_html: true
 
 # Introduction
 
-In this notebook we filter out stations and/or samples that fail various data quality filters. We also subset the data to make it more or less one third of the total.
+In this notebook we filter out stations and/or samples that fail various data quality tests. We also subset the data to make it more or less one third of the total.
 
-Requirements: sppdens, sample_info, refer
+Requirements: "sppdens", "sample_info", "refer", "MAREANO_GBK-sampled_areas"
 
-Outputs: sppdens_qc
+Outputs: "sppdens_qc"
 
-# Libraries
+# Libraries and input files
 
 ```{r}
+library(rgdal)
 library(tidyverse)
+#library(ggplot2)
+
+# read needed shapefile
+dsn <- "U:/Mareano/VIDEOLAB/VIDEO DATA/200m_scale_species_by_sample/GIS_Data"
+gbk <- readOGR(dsn = dsn, layer = "MAREANO_GBK-sampled_areas_311221") 
+  #%>% fortify
+
 ```
 
 # Station-level quality assessment
@@ -39,13 +47,24 @@ max(refer$cruise_no)
 ```
 
 ## List stations whose data is not in MarVid
-Check for reasons why. Keep in mind that it's possible the station has not yet been analyzed.
+Check for reasons why. Keep in mind that it's possible the station is yet to be analyzed.
 ```{r}
 x<-refer %>% filter(is.na(total_records))%>%
-  select(nRefStation,nSampleNumber,Comments,Other.comments,Notes,Notes.II)
+  select(nRefStation,nSampleNumber,Comments,Other.comments,Notes,Notes.II, lon_mid_dec, lat_mid_dec)
 x
 ```
+## View the spatial distribution of stations not in MarVid
+```{r}
+# convert reference to spatial points
+x_spat <- x %>%
+  select(lon_mid_dec,lat_mid_dec) %>%
+  SpatialPoints %>%
+  SpatialPointsDataFrame(x) %>%
+  utmize
 
+x_spat %>%
+  plot
+```
 
 ## Assess data completeness
 We should use only video lines where data is complete. One way to determine that is by looking at the total number of biological annotations relative to the towed distance. Note that total number of biological annotations depends on species richness, so expect large variation!
@@ -156,13 +175,36 @@ lengFilter <- with(sample_info_f,SegLengthM>length_lower&SegLengthM<length_upper
 sample_info_f %>% filter(!lengFilter)
 ```
 
+###### Spatial distribution
+```{r}
+# convert reference to spatial points
+sif_spat <- sample_info_f %>% filter(!lengFilter) %>%
+  select(x_coord,y_coord) %>%
+  SpatialPoints
+
+par(mar = c(0, 0, 0, 0) + 0.1)
+plot(gbk, border="green")
+plot(sif_spat, axes = FALSE, cex = 0.6, add = TRUE) 
+box() 
+```
 #### Picture quality filter fail
 ```{r}
 picqFilter <-with(sample_info_f, ifelse(is.na(ok_vision),1,
                     ifelse(poor_vision<poorvis_thres&no_vision<novis_thres,1,0)))==1
 sample_info_f %>% filter(!picqFilter)
 ```
+###### Spatial distribution
+```{r}
+# convert reference to spatial points
+sif_spat <- sample_info_f %>% filter(!picqFilter) %>%
+  select(x_coord,y_coord) %>%
+  SpatialPoints
 
+par(mar = c(0, 0, 0, 0) + 0.1)
+plot(gbk, border="green")
+plot(sif_spat, axes = FALSE, cex = 0.6, add = TRUE) 
+box() 
+```
 ## Final set of samples
 This bit is still not working!
 ```{r}
