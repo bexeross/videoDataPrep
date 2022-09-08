@@ -177,7 +177,7 @@ lengFilter <- with(sample_info_f,SegLengthM>length_lower&SegLengthM<length_upper
 sample_info_f %>% filter(!lengFilter)
 ```
 
-###### Spatial distribution
+
 ```{r}
 # convert reference to spatial points
 sif_spat <- sample_info_f %>% filter(!lengFilter) %>%
@@ -189,13 +189,16 @@ plot(gbk, border="green")
 plot(sif_spat, axes = FALSE, cex = 0.6, add = TRUE) 
 box() 
 ```
+
+###### Spatial distribution
+
 #### Picture quality filter fail
 ```{r}
 picqFilter <-with(sample_info_f, ifelse(is.na(ok_vision),1,
                     ifelse(poor_vision<poorvis_thres&no_vision<novis_thres,1,0)))==1
 sample_info_f %>% filter(!picqFilter)
 ```
-###### Spatial distribution
+
 ```{r}
 # convert reference to spatial points
 sif_spat <- sample_info_f %>% filter(!picqFilter) %>%
@@ -207,6 +210,8 @@ plot(gbk, border="green")
 plot(sif_spat, axes = FALSE, cex = 0.6, add = TRUE) 
 box() 
 ```
+###### Spatial distribution
+
 ## Final set of samples
 ```{r}
 combinedFilter <- filter
