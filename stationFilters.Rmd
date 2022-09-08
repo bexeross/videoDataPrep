@@ -62,8 +62,10 @@ x_spat <- x %>%
   SpatialPointsDataFrame(x) %>%
   utmize
 
-x_spat %>%
-  plot
+par(mar = c(0, 0, 0, 0) + 0.1)
+plot(gbk, border="green")
+plot(x_spat, axes = FALSE, cex = 0.6, add = TRUE) 
+box() 
 ```
 
 ## Assess data completeness
