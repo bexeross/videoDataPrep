@@ -208,10 +208,10 @@ plot(sif_spat, axes = FALSE, cex = 0.6, add = TRUE)
 box() 
 ```
 ## Final set of samples
-This bit is still not working!
 ```{r}
 combinedFilter <- filter
-sample_info_f <- 
+
+sample_info_f %>% 
   dplyr::filter(combinedFilter) %>%
   select(SampID) %>%
   pull %>%
