@@ -24,16 +24,23 @@ Assumes:
 ```{r}
 library(dplyr)
 ```
+#inputs
+Loaded from file in config to ensure stable random subsample
+
+```{r}
+#activeSppFilter
+#activeStFilter
+```
 
 
 #Combine filters to form dataset
 
 Use output of stationFilters (sample_info_f_ss) to select from filtered species data (sel.sppDens)
 ```{r}
-stFilt.sel.sppDens<-sel.sppDens%>% filter(SampID%in%sample_info_f_ss$SampID) 
+stFilt.sel.sppDens<-activeSppFilter%>% filter(SampID%in%activeStFilter$SampID) 
 
 #check effect
-length(unique(sel.sppDens$SampID)) # number of samples in sp filtered dataset
+length(unique(activeSppFilter$SampID)) # number of samples in sp filtered dataset
 length(unique(stFilt.sel.sppDens$SampID)) # number of samples in station filtered sp filtered dataset 
 ```
 
@@ -53,6 +60,6 @@ head(wideData)
 
 #output dataset
 ```{r}
-write.csv(wideData, file=file.path(dataPath,("wideData.csv")))
+write.csv(wideData, file=file.path(dataPath,(paste0("widedata_", Sys.Date(),".csv"))))
 ```
 
