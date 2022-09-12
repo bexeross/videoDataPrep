@@ -143,12 +143,12 @@ Decide what is acceptable in terms of length of sample and picture quality. The 
 #survarea_lower <- 250
 
 # alternative, set thresholds for survey length (maybe better)
-length_lower <- 150
-length_upper <- 400 # is this too much?
+length_lower <- 200
+length_upper <- 250 # is this too much?
 
 # threshold for picture quality
-# in English, Doc: "either unknown, or not more than half with no vision, or not more than one quarter with poor vision"
-poorvis_thres <- 0.75
+# in English, Doc: "either unknown, or not more than half with no vision, or not more than three quarters with poor vision"
+poorvis_thres <- 0.9 
 novis_thres <- 0.5
 
 #table(ifelse(is.na(sample_info_f$ok_vision),1,
@@ -228,4 +228,5 @@ sample_info_f %>%
 ```{r}
 sample_info_f_ss <- sample_info_f %>% group_by(VL) %>% slice_sample(n=1)
 length(unique(sample_info_f_ss$VL))
+
 ```
