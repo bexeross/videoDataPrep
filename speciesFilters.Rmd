@@ -1,7 +1,15 @@
 ---
 title: "species filters for NiN/biotope classification analyses - R Notebook"
-output: html_notebook
 authors: Rebecca Ross and Genoveva Gonzales-Mirelis
+date: "Last Rendered on `r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_notebook: 
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
+    fig_width: 7
+    fig_height: 7
+always_allow_html: true 
 ---
 
 This script assumes that MarVid data has passed through the rStation and sample filters already, and will now undergo species filters that are common between NiN/biotope analyses. Some additional filters may only be applied on an analysis-specific basis - these are found within the analyses projects themselves (e.g. deepseaNiN or twinspanBiotopes).
