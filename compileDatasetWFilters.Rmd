@@ -1,0 +1,13 @@
+---
+title: "Compile Filtered Dataset - R Notebook"
+authors:  Rebecca Ross and Genoveva Gonzalez Mirelis
+date: "Last Rendered on `r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_notebook: 
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
+    fig_width: 7
+    fig_height: 7
+always_allow_html: true 
+---
