@@ -11,3 +11,28 @@ output:
     fig_height: 7
 always_allow_html: true 
 ---
+
+#Assumptions
+This script allows you to run species/ station filters/ any other filters in what ever order suits you, then compile the final objects here to ensure you are getting the up-to-date filters applied.
+
+Assumes:
+- pre run config
+- pre run Filters scripts
+
+
+#Libraries
+```{r}
+library(dplyr)
+```
+
+
+#Combine filters to form dataset
+```{r}
+
+```
+
+#Change to wide format for analyses
+```{r}
+
+```
+
