@@ -131,8 +131,8 @@ sample_info_f <- sample_info %>%
   filter(VL%in%stationFilter) %>%
   mutate(area_m2 = SegLengthM * meanFoV_m)
 par(mfrow=c(1,2))
-hist(sample_info$area_m2, main ="Surveyed area", xlab = "Area (m2)")
-hist(sample_info$SegLengthM, main ="Surveyed distance", xlab = "Length (m)")
+hist(sample_info_f$area_m2, main ="Surveyed area", xlab = "Area (m2)")
+hist(sample_info_f$SegLengthM, main ="Surveyed distance", xlab = "Length (m)")
 ```
 
 ## Set thresholds for data quality
