@@ -96,6 +96,11 @@ check.specLT1.sppDens
 #unique(sel.sppDens.cln$clean_taxonomy2)
   
 ```
+# Final object
+```{r}
+head(sel.sppDens)
+length(unique(sel.sppDens$clean_taxonomy))
+```
 
 
 
