@@ -143,8 +143,8 @@ Decide what is acceptable in terms of length of sample and picture quality. The 
 #survarea_lower <- 250
 
 # alternative, set thresholds for survey length (maybe better)
-length_lower <- 200
-length_upper <- 250 # is this too much?
+length_lower <- 200 
+length_upper <- 250 
 
 # threshold for picture quality
 # in English, Doc: "either unknown, or not more than half with no vision, or not more than three quarters with poor vision"
@@ -221,6 +221,20 @@ sample_info_f %>%
   select(SampID) %>%
   pull %>%
   length
+
+
+```
+## See final distribution
+
+```{r}
+fin_spat <- sample_info_f %>% 
+  select(x_coord,y_coord) %>%
+  SpatialPoints
+
+par(mar = c(0, 0, 0, 0) + 0.1)
+plot(gbk, border="green")
+plot(fin_spat, axes = FALSE, cex = 0.6, add = TRUE) 
+box() 
 ```
 
 # Subset samples for maneagbility
