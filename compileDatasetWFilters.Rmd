@@ -27,8 +27,13 @@ library(dplyr)
 
 
 #Combine filters to form dataset
-```{r}
 
+Use output of stationFilters (sample_info_f_ss) to select from filtered species data (sel.sppDens)
+```{r}
+stFilt.sel.sppDens<-sel.sppDens%>% filter(SampID%in%sample_info_f_ss$SampID) 
+
+length(unique(sel.sppDens$SampID)) # number of samples in sp filtered dataset
+length(unique(stFilt.sel.sppDens$SampID)) # number of samples in station filtered sp filtered dataset
 ```
 
 #Change to wide format for analyses
