@@ -32,12 +32,27 @@ Use output of stationFilters (sample_info_f_ss) to select from filtered species 
 ```{r}
 stFilt.sel.sppDens<-sel.sppDens%>% filter(SampID%in%sample_info_f_ss$SampID) 
 
+#check effect
 length(unique(sel.sppDens$SampID)) # number of samples in sp filtered dataset
-length(unique(stFilt.sel.sppDens$SampID)) # number of samples in station filtered sp filtered dataset
+length(unique(stFilt.sel.sppDens$SampID)) # number of samples in station filtered sp filtered dataset 
 ```
 
 #Change to wide format for analyses
-```{r}
 
+```{r}
+#temporary code to make working object - ensure use specLT1 object later
+wideData <- stFilt.sel.sppDens %>% select(-c(TotAbu_pseudocount)) %>%
+  mutate(clean_taxonomy = gsub(" ","_",clean_taxonomy)) %>%
+ # mutate(clean_taxonomy = gsub("\\..*","",clean_taxonomy, fixed=FALSE)) %>%#removes whats after the ;
+  pivot_wider(names_from = clean_taxonomy, values_from = density_n100m2, values_fill = 0, values_fn = sum)%>%
+  select("SampID",sort(colnames(.))) #nice to have the cols alphabetical
+
+head(wideData)
+
+```
+
+#output dataset
+```{r}
+write.csv(wideData, file=file.path(dataPath,("wideData.csv")))
 ```
 
