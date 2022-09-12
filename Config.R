@@ -23,6 +23,10 @@ sample_info <- read.csv(file.path(dataPath,"sample_info.csv"))
 
 taxonary <- read_xlsx(file.path(dataPath_2, "Taxonary.xlsx"), sheet=1)
 
+
+activeSppFilter<-read.csv(file.path(dataPath,"activeSpeciesfilter_2022-09-12.csv"))
+activeStFilter<-read.csv(file.path(dataPath,"activeSubsample_2022-09-12.csv"))
+
 ## Some functions
 
 #convert geographic coordinates in WGS84 to UTM33N
