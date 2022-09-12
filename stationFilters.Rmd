@@ -239,8 +239,15 @@ box()
 
 # Subset samples for maneagbility
 ## Take a random (sub)sample from each Ref station
+
 ```{r}
 sample_info_f_ss <- sample_info_f %>% group_by(VL) %>% slice_sample(n=1)
 length(unique(sample_info_f_ss$VL))
 
 ```
+
+write the subsample to csv with sys.Date appended to keep track of which is the active sample that day
+```{r}
+write.csv(sample_info_f_ss, file=file.path(dataPath,(paste0("activeSubsample_", Sys.Date(),".csv"))))
+```
+
