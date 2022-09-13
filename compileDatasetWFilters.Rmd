@@ -25,11 +25,12 @@ Assumes:
 library(dplyr)
 ```
 #inputs
-Loaded from file in config to ensure stable random subsample
+Loaded from file to ensure stable random subsample - check dates are correct version
 
 ```{r}
-#activeSppFilter
-#activeStFilter
+activeSppFilter<-read.csv(file.path(dataPath,"activeSpeciesfilter_2022-09-13.csv"))
+activeStFilter<-read.csv(file.path(dataPath,"activeSubsample_2022-09-13.csv"))
+
 ```
 
 
