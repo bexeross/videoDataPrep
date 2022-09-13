@@ -2,16 +2,13 @@
 ## Paths
 
 library(readxl)
-# https://owncloud.imr.no/index.php/s/lCkOERjzJkPItZj
 
-# C:\Users\genoveva\ownCloud\NiN_Mareano\inputs
-
-#userName <- "C:/Users/genoveva/" # replace with your own name here
-userName <- "C:/Users/a21448/" # bex's path
-#userName <- "C:/Users/genoveva/"
+userName <- "C:/Users/genoveva/" # geno's path
+#userName <- "C:/Users/a21448/" # bex's path
+#userName <- "C:/Users/Wilson_Margaret/" # Margaret's path
   
   
-dataPath1 <- "ownCloud/NiN_Mareano/inputs"
+dataPath1 <- "OneDrive - Havforskningsinstituttet/General/inputs"
 dataPath2 <- "Havforskningsinstituttet/Video analysis lab - Reference List"
 
 dataPath <- paste0(userName, dataPath1)
