@@ -32,6 +32,8 @@ Loaded from file to ensure stable random subsample - check dates are correct ver
 activeSppFilter<-read.csv(file.path(dataPath,"activeSpeciesfilter_2022-09-13.csv"))
 activeStFilter<-read.csv(file.path(dataPath,"activeSubsample_2022-09-13.csv"))
 
+length(unique(activeSppFilter$SampID)) # number of samples in sp filtered dataset
+length(unique(activeStFilter$SampID)) # number of samples in st filtered dataset
 ```
 
 
@@ -49,8 +51,8 @@ length(unique(stFilt.sel.sppDens$SampID)) # number of samples in station filtere
 #Change to wide format for analyses
 
 ```{r}
-#temporary code to make working object - ensure use specLT1 object later
-wideData <- stFilt.sel.sppDens %>% select(-c(TotAbu_pseudocount)) %>%
+
+wideData <- stFilt.sel.sppDens %>% select(-c(TotAbu_pseudocount, X)) %>%
   mutate(clean_taxonomy = gsub(" ","_",clean_taxonomy)) %>%
  # mutate(clean_taxonomy = gsub("\\..*","",clean_taxonomy, fixed=FALSE)) %>%#removes whats after the ;
   pivot_wider(names_from = clean_taxonomy, values_from = density_n100m2, values_fill = 0, values_fn = sum)%>%
