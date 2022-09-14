@@ -23,6 +23,7 @@ Assumes:
 #Libraries
 ```{r}
 library(dplyr)
+library(tidyr)
 ```
 #inputs
 Loaded from file to ensure stable random subsample - check dates are correct version
@@ -62,5 +63,14 @@ head(wideData)
 #output dataset
 ```{r}
 write.csv(wideData, file=file.path(dataPath,(paste0("widedata_", Sys.Date(),".csv"))))
+```
+
+# ALIGN ENV dataset to final selection of samples
+```{r}
+envData<-read.csv(file.path(dataPath,"samples_env.csv"))
+
+envData_f<-envData%>% filter(SampID%in%wideData$SampID) 
+
+write.csv(envData_f, file=file.path(dataPath,(paste0("envData_", Sys.Date(),".csv"))))
 ```
 
