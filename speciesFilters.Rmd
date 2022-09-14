@@ -37,7 +37,6 @@ RULES
 t.org <-subset(taxonary, Object_type=="Organism" )
 ```
 
-
 - Remove specificity =4
 ```{r}
 t.orgSpec<-subset(t.org, Specificity<4)
@@ -47,7 +46,6 @@ t.orgSpec<-subset(t.org, Specificity<4)
 ```{r}
 t.orgSpecMega<-subset(t.orgSpec, Size_class=="Mega")
 ```
-
 
 - Remove ecosystem_section = Demersal/Hyperbenthic
 ```{r}
@@ -66,7 +64,9 @@ unique(t.orgSpecMegaBenthic$`Reference List`)
 ```{r}
 sel.sppDens<-sppdens%>% filter(clean_taxonomy%in%t.orgSpecMegaBenthic$`Reference List`)
 
-unique(sel.sppDens$clean_taxonomy) #391 taxa after selection with the 529 selected taxonary taxa - why?
+sel.sppDens.nona <- sel.sppDens[complete.cases(sel.sppDens),]
+
+unique(sel.sppDens.nona$clean_taxonomy) #391 taxa after selection with the 529 selected taxonary taxa - why?
 
 #unique(sppdens$clean_taxonomy) #637 taxa in spp dens
 
@@ -78,34 +78,38 @@ unique(sel.sppDens$clean_taxonomy) #391 taxa after selection with the 529 select
 # Deal with specificity <1
 
 NB Not an issue in current dataset so this section is incomplete and does not need to be run.
+NB refactor for .nona object
 ```{r}
-#list taxa with specificity <1 (sub species level)
-t.sel.specLT1<-subset(t.orgSpecMegaBenthic, Specificity<1)
-
-#create look up table converting these to species level (remove what is after the ';')
-lkup.specLT1<-t.sel.specLT1%>%
-  select(`Reference List`) %>%
-  mutate(clean_taxonomy = gsub(";.*","",`Reference List`))
-
-#Check if those feature in sppdens dataset (none in sppDens right now, so check code with future dataset)
-
-check.specLT1.sppDens<-sppdens%>% filter(clean_taxonomy%in%lkup.specLT1$`Reference List`) #none in spdens, so no issue right now
-check.specLT1.sppDens
-#find and replace using the lookup table (not checked if working, and still incomplete, check with future data if there are <1 specificity taxa recorded in the sppdens dataset)
-
-# sel.sppDens$clean_taxonomy2<-with (sel.sppDens, replace(clean_taxonomy, which(clean_taxonomy==lkup.specLT1$`Reference List`), lkup.specLT1$clean_taxonomy))
-#unique(sel.sppDens.cln$clean_taxonomy2)
+# 
+# #list taxa with specificity <1 (sub species level)
+# t.sel.specLT1<-subset(t.orgSpecMegaBenthic, Specificity<1)
+# 
+# #create look up table converting these to species level (remove what is after the ';')
+# lkup.specLT1<-t.sel.specLT1%>%
+#   select(`Reference List`) %>%
+#   mutate(clean_taxonomy = gsub(";.*","",`Reference List`))
+# 
+# #Check if those feature in sppdens dataset (none in sppDens right now, so check code with future dataset)
+# 
+# check.specLT1.sppDens<-sppdens%>% filter(clean_taxonomy%in%lkup.specLT1$`Reference List`) #none in spdens, so no issue right now
+# check.specLT1.sppDens
+# #find and replace using the lookup table (not checked if working, and still incomplete, check with future data if there are <1 specificity taxa recorded in the sppdens dataset)
+# 
+# # sel.sppDens$clean_taxonomy2<-with (sel.sppDens, replace(clean_taxonomy, which(clean_taxonomy==lkup.specLT1$`Reference List`), lkup.specLT1$clean_taxonomy))
+# #unique(sel.sppDens.cln$clean_taxonomy2)
   
 ```
 # Final object
 ```{r}
-head(sel.sppDens)
-length(unique(sel.sppDens$clean_taxonomy))
+head(sel.sppDens.nona)
+length(unique(sel.sppDens.nona$clean_taxonomy))
+table(is.na(sel.sppDens.nona))
+
 ```
 
 write the subsample to csv with sys.Date appended to keep track of which is the active sample that day
 ```{r}
-write.csv(sel.sppDens, file=file.path(dataPath,(paste0("activeSpeciesfilter_", Sys.Date(),".csv"))))
+write.csv(sel.sppDens.nona, file=file.path(dataPath,(paste0("activeSpeciesfilter_", Sys.Date(),".csv"))))
 ```
 
 
