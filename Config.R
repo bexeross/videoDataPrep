@@ -3,12 +3,12 @@
 
 library(readxl)
 
-userName <- "C:/Users/genoveva/" # geno's path
-#userName <- "C:/Users/a21448/" # bex's path
-#userName <- "C:/Users/Wilson_Margaret/" # Margaret's path
+#userName <- "C:/Users/genoveva/OneDrive - Havforskningsinstituttet/General/" # geno's path
+userName <- "C:/Users/a21448/Havforskningsinstituttet/NiN + MAREANO - General" # bex's path
+#userName <- "C:/Users/Wilson_Margaret/Havforskningsinstituttet/NiN + MAREANO - General" # Margaret's path
   
   
-dataPath1 <- "OneDrive - Havforskningsinstituttet/General/inputs"
+dataPath1 <- "inputs"
 dataPath2 <- "Havforskningsinstituttet/Video analysis lab - Reference List"
 
 dataPath <- paste0(userName, dataPath1)
