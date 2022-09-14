@@ -148,7 +148,7 @@ length_upper <- 250
 
 # threshold for picture quality
 # in English, Doc: "either unknown, or not more than half with no vision, or not more than three quarters with poor vision"
-poorvis_thres <- 0.9 
+poorvis_thres <- 0.5 
 novis_thres <- 0.5
 
 #table(ifelse(is.na(sample_info_f$ok_vision),1,
@@ -227,7 +227,7 @@ sample_info_f %>%
 ## See final distribution
 
 ```{r}
-fin_spat <- sample_info_f %>% 
+fin_spat <- sample_info_f %>% dplyr::filter(combinedFilter) %>%
   select(x_coord,y_coord) %>%
   SpatialPoints
 
@@ -241,7 +241,7 @@ box()
 ## Take a random (sub)sample from each Ref station
 
 ```{r}
-sample_info_f_ss <- sample_info_f %>% group_by(VL) %>% slice_sample(n=1)
+sample_info_f_ss <- sample_info_f %>% dplyr::filter(combinedFilter)  %>% group_by(VL) %>% slice_sample(n=1)
 length(unique(sample_info_f_ss$VL))
 
 ```
