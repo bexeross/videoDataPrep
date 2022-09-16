@@ -35,11 +35,22 @@ activeStFilter<-read.csv(file.path(dataPath,"activeSubsample_2022-09-13.csv"))
 length(unique(activeSppFilter$SampID)) # number of samples in sp filtered dataset
 length(unique(activeStFilter$SampID)) # number of samples in st filtered dataset
 ```
+### check location of sample subset
+```{r}
+sfilt_fin_spat <- activeStFilter %>%
+  select(x_coord,y_coord) %>%
+  SpatialPoints
+
+par(mar = c(0, 0, 0, 0) + 0.1)
+plot(gbk, border="green")
+plot(sfilt_fin_spat, axes = FALSE, cex = 0.6, add = TRUE) 
+box() 
+```
 
 
 #Combine filters to form dataset
 
-Use output of stationFilters (sample_info_f_ss) to select from filtered species data (sel.sppDens)
+Use output of stationFilters to select from filtered species data 
 ```{r}
 stFilt.sel.sppDens<-activeSppFilter%>% filter(SampID%in%activeStFilter$SampID) 
 
@@ -47,6 +58,24 @@ stFilt.sel.sppDens<-activeSppFilter%>% filter(SampID%in%activeStFilter$SampID)
 length(unique(activeSppFilter$SampID)) # number of samples in sp filtered dataset
 length(unique(stFilt.sel.sppDens$SampID)) # number of samples in station filtered sp filtered dataset 
 ```
+
+### check location of species filter applied to sample filter subset
+```{r}
+spstfilt_fin<-sample_info %>%
+  filter(SampID2%in%stFilt.sel.sppDens$SampID)
+
+
+spstfilt_fin_spat <- spstfilt_fin %>%
+  select(x_coord,y_coord) %>%
+  SpatialPoints
+
+par(mar = c(0, 0, 0, 0) + 0.1)
+plot(gbk, border="green")
+plot(spstfilt_fin_spat, axes = FALSE, cex = 0.6, add = TRUE) 
+box() 
+```
+
+
 
 #Change to wide format for analyses
 
@@ -72,6 +101,18 @@ write.csv(wideData, file=file.path(dataPath,(paste0("widedata_", Sys.Date(),".cs
 envData<-read.csv(file.path(dataPath,"samples_env.csv"))
 
 envData_f<-envData%>% filter(SampID%in%wideData$SampID) 
+length(unique(envData_f$SampID)) # number of samples in env dataset
+table(duplicated(envData_f$SampID))
+envData_f$SampID[duplicated(envData_f$SampID)]
+
+env_fin_spat <- envData_f %>%
+  select(x_coord,y_coord) %>%
+  SpatialPoints
+
+par(mar = c(0, 0, 0, 0) + 0.1)
+plot(gbk, border="green")
+plot(env_fin_spat, axes = FALSE, cex = 0.6, add = TRUE) 
+box() 
 
 write.csv(envData_f, file=file.path(dataPath,(paste0("envData_", Sys.Date(),".csv"))))
 ```
