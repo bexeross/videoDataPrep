@@ -30,7 +30,7 @@ Loaded from file to ensure stable random subsample - check dates are correct ver
 
 ```{r}
 activeSppFilter<-read.csv(file.path(dataPath,"activeSpeciesfilter_2022-09-13.csv"))
-activeStFilter<-read.csv(file.path(dataPath,"activeSubsample_2022-09-13.csv"))
+activeStFilter<-read.csv(file.path(dataPath,"activeSubsampleOslo_2022-09-29.csv"))
 
 length(unique(activeSppFilter$SampID)) # number of samples in sp filtered dataset
 length(unique(activeStFilter$SampID)) # number of samples in st filtered dataset
@@ -93,7 +93,7 @@ head(wideData)
 
 #output dataset
 ```{r}
-write.csv(wideData, file=file.path(dataPath,(paste0("widedata_", Sys.Date(),".csv"))))
+write.csv(wideData, file=file.path(dataPath,(paste0("widedataOslo_", Sys.Date(),".csv"))))
 ```
 
 # ALIGN ENV dataset to final selection of samples
@@ -114,6 +114,6 @@ plot(gbk, border="green")
 plot(env_fin_spat, axes = FALSE, cex = 0.6, add = TRUE) 
 box() 
 
-write.csv(envData_f, file=file.path(dataPath,(paste0("envData_", Sys.Date(),".csv"))))
+write.csv(envData_f, file=file.path(dataPath,(paste0("envDataOslo_", Sys.Date(),".csv"))))
 ```
 
