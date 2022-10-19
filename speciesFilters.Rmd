@@ -26,6 +26,17 @@ library(dplyr)
 - Needs Taxonary
 (loaded into environment when you have run the config.R script in this repo)
 
+# Deal with analysis name replacements
+
+```{r}
+taxonary$OrigRefList<-taxonary$`Reference List`
+
+#taxonary$`Reference List`[!is.na(taxonary$Analysis_name)]<-taxonary$Analysis_name
+
+taxonary<-taxonary %>% mutate(`Reference List`= ifelse(!is.na(Analysis_name),Analysis_name,OrigRefList
+))
+
+```
 
 
 #Filter taxonary
@@ -44,7 +55,7 @@ t.orgSpec<-subset(t.org, Specificity<4)
 
 - Remove Size_class = Macro
 ```{r}
-t.orgSpecMega<-subset(t.orgSpec, Size_class=="Mega")
+t.orgSpecMega<-subset(t.orgSpec, Size_class=="OK")
 ```
 
 - Remove ecosystem_section = Demersal/Hyperbenthic
